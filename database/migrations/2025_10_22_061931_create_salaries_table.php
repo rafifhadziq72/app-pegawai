@@ -18,8 +18,6 @@ return new class extends Migration {
             $table->timestamps();
             // Relasi ke tabel employees
             $table->foreign('karyawan_id')
-
-
                 ->references('id')
                 ->on('employees')
                 ->onDelete('cascade');

@@ -14,11 +14,12 @@ return new class extends Migration {
             $table->foreign('departemen_id')
                 ->references('id')
                 ->on('departments')
-                ->onDelete('cascade');
+                ->onDelete('set null');
+
             $table->foreign('jabatan_id')
                 ->references('id')
                 ->on('positions')
-                ->onDelete('cascade');
+                ->onDelete('set null');
 
         });
     }

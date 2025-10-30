@@ -24,5 +24,6 @@ return new class extends Migration {
                 ->onDelete('cascade');
 
         });
+
     }
 };

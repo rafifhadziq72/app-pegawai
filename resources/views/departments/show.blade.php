@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Pegawai</title>
+    <title>Detail Departemen</title>
     @vite(['resources/css/app.css'])
     <!-- Jika kamu menggunakan FlowBite JS/CSS via NPM, uncomment baris di bawah -->
     <!-- @vite(['resources/js/app.js']) -->
@@ -18,7 +18,7 @@
                 <!-- Header -->
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0 md:space-x-4 p-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="w-full">
-                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Detail Pegawai</h1>
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Detail Departemen</h1>
                     </div>
                 </div>
 
@@ -26,80 +26,51 @@
                 <div class="p-6">
                     <dl class="grid max-w-screen-lg mx-auto text-gray-900 divide-y divide-gray-200 dark:divide-gray-700 dark:text-white sm:grid-cols-3 sm:gap-4">
                         <div class="flex flex-col pb-3 sm:gap-1 sm:col-span-1">
-                            <dt class="text-gray-500 dark:text-gray-400">Nama Lengkap</dt>
+                            <dt class="text-gray-500 dark:text-gray-400">ID</dt>
                         </div>
                         <div class="flex flex-col pb-3 sm:gap-1 sm:col-span-2">
                             <dd class="font-medium dark:text-white">
-                                {{ $employee->nama_lengkap }}
+                                {{ $department->id }}
                             </dd>
                         </div>
 
                         <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
-                            <dt class="text-gray-500 dark:text-gray-400">Email</dt>
+                            <dt class="text-gray-500 dark:text-gray-400">Nama Departemen</dt>
                         </div>
                         <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
                             <dd class="font-medium dark:text-white">
-                                {{ $employee->email }}
+                                {{ $department->nama_departemen }}
                             </dd>
                         </div>
 
                         <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
-                            <dt class="text-gray-500 dark:text-gray-400">Nomor Telepon</dt>
+                            <dt class="text-gray-500 dark:text-gray-400">Dibuat Pada</dt>
                         </div>
                         <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
                             <dd class="font-medium dark:text-white">
-                                {{ $employee->nomor_telepon }}
+                                {{ $department->created_at }}
                             </dd>
                         </div>
 
                         <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
-                            <dt class="text-gray-500 dark:text-gray-400">Tanggal Lahir</dt>
+                            <dt class="text-gray-500 dark:text-gray-400">Diubah Pada</dt>
                         </div>
                         <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
                             <dd class="font-medium dark:text-white">
-                                {{ $employee->tanggal_lahir }}
-                            </dd>
-                        </div>
-
-                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
-                            <dt class="text-gray-500 dark:text-gray-400">Alamat</dt>
-                        </div>
-                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
-                            <dd class="font-medium dark:text-white">
-                                {{ $employee->alamat }}
-                            </dd>
-                        </div>
-
-                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
-                            <dt class="text-gray-500 dark:text-gray-400">Tanggal Masuk</dt>
-                        </div>
-                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
-                            <dd class="font-medium dark:text-white">
-                                {{ $employee->tanggal_masuk }}
-                            </dd>
-                        </div>
-
-                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
-                            <dt class="text-gray-500 dark:text-gray-400">Status</dt>
-                        </div>
-                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
-                            <dd class="font-medium dark:text-white">
-                                <span class="bg-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-100 text-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-900 dark:text-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-200">
-                                    {{ ucfirst($employee->status) }}
-                                </span>
+                                {{ $department->updated_at }}
                             </dd>
                         </div>
                     </dl>
 
                     <!-- Buttons -->
                     <div class="flex space-x-4 mt-6">
-                        <a href="{{ route('employees.edit', $employee->id) }}"
+                        <a href="{{ route('departments.edit', $department->id) }}"
                            class="px-5 py-2.5 text-sm font-medium text-center text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Edit
                         </a>
-                        <a href="{{ route('employees.index') }}"
+                        <a href="{{ route('departments.index') }}"
                            class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
-                            Kembali
+                            Kembali ke Daftar
                         </a>
                     </div>
                 </div>
