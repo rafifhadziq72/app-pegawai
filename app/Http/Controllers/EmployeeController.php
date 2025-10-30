@@ -11,7 +11,9 @@ class EmployeeController extends Controller
     }
     public function create()
     {
-        return view('employees.create');
+        $departments = \App\Models\Department::all();
+        $positions = \App\Models\Position::all();
+        return view('employees.create', compact('departments', 'positions'));
     }
     public function store(Request $request)
     {
@@ -23,6 +25,8 @@ class EmployeeController extends Controller
             'alamat' => 'required|string|max:255',
             'tanggal_masuk' => 'required|date',
             'status' => 'required|string|max:50',
+            'departemen_id'=>'nullable|exists:departments,id',
+            'jabatan_id'=>'nullable|exists:positions,id',
         ]);
         Employee::create($request->all());
         return redirect()->route('employees.index');
@@ -41,7 +45,9 @@ class EmployeeController extends Controller
     public function edit(string $id)
     {
         $employee = Employee::find($id);
-        return view('employees.edit', compact('employee'));
+        $departments = \App\Models\Department::all();
+        $positions = \App\Models\Position::all();
+        return view('employees.edit', compact('employee','departments','positions'));
     }
     public function update(Request $request, string $id)
     {
@@ -54,6 +60,8 @@ class EmployeeController extends Controller
             'alamat' => 'required|string|max:255',
             'tanggal_masuk' => 'required|date',
             'status' => 'required|string|max:50',
+            'departemen_id'=>'nullable|exists:departments,id',
+            'jabatan_id'=>'nullable|exists:positions,id',
         ]);
         $employee = Employee::findOrFail($id);
         $employee->update($request->only([
@@ -64,6 +72,8 @@ class EmployeeController extends Controller
             'alamat',
             'tanggal_masuk',
             'status',
+            'departemen_id',
+            'jabatan_id',
         ]));
         return redirect()->route('employees.index');
     }
