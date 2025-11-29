@@ -27,7 +27,7 @@
                         <div
                             class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
                             <a href="{{ route('positions.create') }}"
-                                class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+           class="flex items-center text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition">
                                 <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path clip-rule="evenodd" fill-rule="evenodd"
@@ -36,6 +36,50 @@
                                 Tambah Jabatan Baru
                             </a>
                         </div>
+                    </div>
+
+                    <!-- Search Section -->
+                    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                        <form method="GET" action="{{ route('positions.index') }}" class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-grow">
+                                <label for="search" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cari Jabatan</label>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        id="search" 
+                                        name="search" 
+                                        value="{{ request('search') }}"
+                                        placeholder="Cari berdasarkan nama jabatan atau gaji pokok..." 
+                                        class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    >
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-end">
+                            <button type="submit" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 w-full">
+                                Cari
+                            </button>
+                        </div>
+                            @if(request('search'))
+                            <div class="flex items-end">
+                                <a href="{{ route('positions.index') }}" 
+                                   class="text-gray-900 bg-gray-100 hover:bg-gray-200 border border-gray-300 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-700 w-full">
+                                    Clear
+                                </a>
+                            </div>
+                            @endif
+                        </form>
+                        
+                        <!-- Search Results Info -->
+                        @if(request('search'))
+                        <div class="mt-3 text-sm text-gray-600 dark:text-gray-300">
+                            Menemukan {{ $positions->total() }} hasil untuk pencarian: "{{ request('search') }}"
+                        </div>
+                        @endif
                     </div>
 
                     <!-- Table Container -->
@@ -83,7 +127,11 @@
                                 @empty
                                     <tr>
                                         <td colspan="3" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                            Tidak ada data jabatan.
+                                            @if(request('search'))
+                                                Tidak ada data jabatan yang cocok dengan pencarian "{{ request('search') }}".
+                                            @else
+                                                Tidak ada data jabatan.
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforelse
