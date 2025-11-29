@@ -1,0 +1,1052 @@
+okey, now  i want to add salary section. i will give you salary programs and employee program. so you can add employee's salary in employee section. 
+employee :
+index :
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Pegawai</title>
+    @vite(['resources/css/app.css'])
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900">
+    @extends('master')
+    @section('title', 'Daftar Pegawai')
+    @section('content')
+        <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5 antialiased">
+            <div class="mx-auto max-w-screen-2xl px-4 lg:px-12">
+                <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+                    <!-- Header -->
+                    <div
+                        class="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                        <div class="w-full">
+                            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Daftar Pegawai</h1>
+                        </div>
+                        <div
+                            class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+                            <a href="{{ route('employees.create') }}"
+                                class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                                <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path clip-rule="evenodd" fill-rule="evenodd"
+                                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                                </svg>
+                                Tambah Pegawai Baru
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Search Section -->
+                    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                        <form method="GET" action="{{ route('employees.index') }}" class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-grow">
+                                <label for="search"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cari
+                                    Pegawai</label>
+                                <div class="relative">
+                                    <input type="text" id="search" name="search" value="{{ request('search') }}"
+                                        placeholder="Cari berdasarkan nama, email, nomor telepon, alamat, departemen, atau jabatan..."
+                                        class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit"
+                                    class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 w-full">
+                                    Cari
+                                </button>
+                            </div>
+                            @if(request('search'))
+                                <div class="flex items-end">
+                                    <a href="{{ route('employees.index') }}"
+                                        class="text-gray-900 bg-gray-100 hover:bg-gray-200 border border-gray-300 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-700 w-full">
+                                        Clear
+                                    </a>
+                                </div>
+                            @endif
+                        </form>
+
+                        <!-- Search Results Info -->
+                        @if(request('search'))
+                            <div class="mt-3 text-sm text-gray-600 dark:text-gray-300">
+                                Menemukan {{ $employees->total() }} hasil untuk pencarian: "{{ request('search') }}"
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Table Container -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3">Nama Lengkap</th>
+                                    <th scope="col" class="px-4 py-3">Email</th>
+                                    <th scope="col" class="px-4 py-3">Nomor Telepon</th>
+                                    <th scope="col" class="px-4 py-3">Tanggal Lahir</th>
+                                    <th scope="col" class="px-20 py-3">Alamat</th>
+                                    <th scope="col" class="px-4 py-3">Tanggal Masuk</th>
+                                    <th scope="col" class="px-4 py-3">Status</th>
+                                    <th scope="col" class="px-4 py-3">Departemen</th> <!-- NEW COLUMN -->
+                                    <th scope="col" class="px-4 py-3">Jabatan</th> <!-- NEW COLUMN -->
+                                    <th scope="col" class="px-4 py-3">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($employees as $employee)
+                                    <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            {{ $employee->nama_lengkap }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $employee->email }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $employee->nomor_telepon }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ \Carbon\Carbon::parse($employee->tanggal_lahir)->format('d/m/Y') }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $employee->alamat }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ \Carbon\Carbon::parse($employee->tanggal_masuk)->format('d/m/Y') }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span
+                                                class="bg-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-100 text-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-900 dark:text-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-200">
+                                                {{ ucfirst($employee->status) }}
+                                            </span>
+                                        </td>
+                                        <!-- NEW COLUMNS BELOW -->
+                                        <td class="px-4 py-3">
+                                            {{ $employee->department ? $employee->department->nama_departemen : '-' }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $employee->position ? $employee->position->nama_jabatan : '-' }}
+                                        </td>
+                                        <!-- END NEW COLUMNS -->
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center space-x-3">
+                                                <a href="{{ route('employees.show', $employee->id) }}"
+                                                    class="text-blue-600 hover:text-blue-900 dark:text-blue-500 dark:hover:text-blue-700">
+                                                    Detail
+                                                </a>
+                                                <a href="{{ route('employees.edit', $employee->id) }}"
+                                                    class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-500 dark:hover:text-yellow-700">
+                                                    Edit
+                                                </a>
+                                                <form action="{{ route('employees.destroy', $employee->id) }}" method="POST"
+                                                    class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="text-red-600 hover:text-red-900 dark:text-red-500 dark:hover:text-red-700"
+                                                        onclick="return confirm('Yakin ingin menghapus?')">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="10" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                                            @if(request('search'))
+                                                Tidak ada data pegawai yang cocok dengan pencarian "{{ request('search') }}".
+                                            @else
+                                                Tidak ada data pegawai.
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    @if ($employees->hasPages())
+                        <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
+                            aria-label="Table navigation">
+                            <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                Showing <span
+                                    class="font-medium text-gray-900 dark:text-white">{{ $employees->firstItem() }}</span> to
+                                <span class="font-medium text-gray-900 dark:text-white">{{ $employees->lastItem() }}</span> of
+                                <span class="font-medium text-gray-900 dark:text-white">{{ $employees->total() }}</span>
+                            </span>
+                            <ul class="inline-flex items-stretch -space-x-px">
+                                @if ($employees->onFirstPage())
+                                    <li>
+                                        <span
+                                            class="flex items-center justify-center px-3 h-full text-gray-500 bg-white border border-gray-300 rounded-l-lg leading-tight dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                            <span class="sr-only">Previous</span>
+                                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </span>
+                                    </li>
+                                @else
+                                    <li>
+                                        <a href="{{ $employees->previousPageUrl() }}"
+                                            class="flex items-center justify-center px-3 h-full text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 leading-tight dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                            <span class="sr-only">Previous</span>
+                                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </a>
+                                    </li>
+                                @endif
+
+                                @foreach ($employees->links()->elements[0] as $page => $url)
+                                    @if ($page == $employees->currentPage())
+                                        <li>
+                                            <span
+                                                class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">
+                                                {{ $page }}
+                                            </span>
+                                        </li>
+                                    @else
+                                        <li>
+                                            <a href="{{ $url }}"
+                                                class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                                {{ $page }}
+                                            </a>
+                                        </li>
+                                    @endif
+                                @endforeach
+
+                                @if ($employees->hasMorePages())
+                                    <li>
+                                        <a href="{{ $employees->nextPageUrl() }}"
+                                            class="flex items-center justify-center px-3 h-full text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 leading-tight dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                            <span class="sr-only">Next</span>
+                                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </a>
+                                    </li>
+                                @else
+                                    <li>
+                                        <span
+                                            class="flex items-center justify-center px-3 h-full text-gray-500 bg-white border border-gray-300 rounded-r-lg leading-tight dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                            <span class="sr-only">Next</span>
+                                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </span>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
+                    @endif
+                </div>
+            </div>
+        </section>
+    @endsection
+</body>
+
+</html>
+
+create : 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input Pegawai</title>
+    @vite(['resources/css/app.css'])
+    <!-- Jika kamu menggunakan FlowBite JS/CSS via NPM, uncomment baris di bawah -->
+    <!-- @vite(['resources/js/app.js']) -->
+    <!-- <link rel="stylesheet" href="path/to/flowbite.min.css" /> -->
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    @extends('master')
+    @section('content')
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Form Pegawai</h1>
+
+            <form action="{{ route('employees.store') }}" method="POST" class="space-y-6">
+                @csrf
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Nama Lengkap -->
+                    <div>
+                        <label for="nama_lengkap" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Nama Lengkap
+                        </label>
+                        <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap') }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('nama_lengkap')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Email
+                        </label>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('email')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Nomor Telepon -->
+                    <div>
+                        <label for="nomor_telepon" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Nomor Telepon
+                        </label>
+                        <input type="text" name="nomor_telepon" id="nomor_telepon" value="{{ old('nomor_telepon') }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('nomor_telepon')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Tanggal Lahir -->
+                    <div>
+                        <label for="tanggal_lahir" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Tanggal Lahir
+                        </label>
+                        <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('tanggal_lahir')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Alamat -->
+                    <div>
+                        <label for="alamat" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Alamat
+                        </label>
+                        <textarea name="alamat" id="alamat" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">{{ old('alamat') }}</textarea>
+                        @error('alamat')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Tanggal Masuk -->
+                    <div>
+                        <label for="tanggal_masuk" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Tanggal Masuk
+                        </label>
+                        <input type="date" name="tanggal_masuk" id="tanggal_masuk" value="{{ old('tanggal_masuk') }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('tanggal_masuk')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Status
+                        </label>
+                        <select name="status" id="status"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                            <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                        </select>
+                        @error('status')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Department -->
+                    <div>
+                        <label for="department_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Department
+                        </label>
+                        <select name="departemen_id" id="departemen_id"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->id }}" {{ old('departemen_id') == $department->id ? 'selected' : '' }}>
+                                    {{ $department->nama_departemen }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('department_id')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Position -->
+                    <div>
+                        <label for="jabatan_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Positions
+                        </label>
+                        <select name="jabatan_id" id="jabatan_id"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            @foreach ($positions as $position)
+                                <option value="{{ $position->id }}" {{ old('jabatan_id') == $position->id ? 'selected' : '' }}>
+                                    {{ $position->nama_jabatan }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('jabatan_id')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-end space-x-3 pt-4">
+                    <a href="{{ route('employees.index') }}"
+                       class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                        Batal
+                    </a>
+                    <button type="submit"
+                            class="px-5 py-2.5 text-sm font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endsection
+</body>
+</html>
+
+show :
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Pegawai</title>
+    @vite(['resources/css/app.css'])
+    <!-- Jika kamu menggunakan FlowBite JS/CSS via NPM, uncomment baris di bawah -->
+    <!-- @vite(['resources/js/app.js']) -->
+    <!-- <link rel="stylesheet" href="path/to/flowbite.min.css" /> -->
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    @extends('master')
+    @section('content')
+    <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5 antialiased">
+        <div class="mx-auto max-w-4xl px-4 lg:px-12">
+            <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0 md:space-x-4 p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="w-full">
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Detail Pegawai</h1>
+                    </div>
+                </div>
+
+                <!-- Detail Content -->
+                <div class="p-6">
+                    <dl class="grid max-w-screen-lg mx-auto text-gray-900 divide-y divide-gray-200 dark:divide-gray-700 dark:text-white sm:grid-cols-3 sm:gap-4">
+                        <div class="flex flex-col pb-3 sm:gap-1 sm:col-span-1">
+                            <dt class="text-gray-500 dark:text-gray-400">Nama Lengkap</dt>
+                        </div>
+                        <div class="flex flex-col pb-3 sm:gap-1 sm:col-span-2">
+                            <dd class="font-medium dark:text-white">
+                                {{ $employee->nama_lengkap }}
+                            </dd>
+                        </div>
+
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
+                            <dt class="text-gray-500 dark:text-gray-400">Email</dt>
+                        </div>
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
+                            <dd class="font-medium dark:text-white">
+                                {{ $employee->email }}
+                            </dd>
+                        </div>
+
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
+                            <dt class="text-gray-500 dark:text-gray-400">Nomor Telepon</dt>
+                        </div>
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
+                            <dd class="font-medium dark:text-white">
+                                {{ $employee->nomor_telepon }}
+                            </dd>
+                        </div>
+
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
+                            <dt class="text-gray-500 dark:text-gray-400">Tanggal Lahir</dt>
+                        </div>
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
+                            <dd class="font-medium dark:text-white">
+                                {{ $employee->tanggal_lahir }}
+                            </dd>
+                        </div>
+
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
+                            <dt class="text-gray-500 dark:text-gray-400">Alamat</dt>
+                        </div>
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
+                            <dd class="font-medium dark:text-white">
+                                {{ $employee->alamat }}
+                            </dd>
+                        </div>
+
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
+                            <dt class="text-gray-500 dark:text-gray-400">Tanggal Masuk</dt>
+                        </div>
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
+                            <dd class="font-medium dark:text-white">
+                                {{ $employee->tanggal_masuk }}
+                            </dd>
+                        </div>
+
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-1">
+                            <dt class="text-gray-500 dark:text-gray-400">Status</dt>
+                        </div>
+                        <div class="flex flex-col pt-3 pb-3 sm:gap-1 sm:col-span-2">
+                            <dd class="font-medium dark:text-white">
+                                <span class="bg-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-100 text-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-900 dark:text-{{ $employee->status == 'aktif' ? 'green' : 'red' }}-200">
+                                    {{ ucfirst($employee->status) }}
+                                </span>
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <!-- Buttons -->
+                    <div class="flex space-x-4 mt-6">
+                        <a href="{{ route('employees.edit', $employee->id) }}"
+                           class="px-5 py-2.5 text-sm font-medium text-center text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Edit
+                        </a>
+                        <a href="{{ route('employees.index') }}"
+                           class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                            Kembali
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @endsection
+</body>
+</html>
+
+edit :
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Data Pegawai</title>
+    @vite(['resources/css/app.css'])
+    <!-- Jika kamu menggunakan FlowBite JS/CSS via NPM, uncomment baris di bawah -->
+    <!-- @vite(['resources/js/app.js']) -->
+    <!-- <link rel="stylesheet" href="path/to/flowbite.min.css" /> -->
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    @extends('master')
+    @section('content')
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Edit Data Pegawai</h1>
+
+            <form action="{{ route('employees.update', $employee->id) }}" method="POST" class="space-y-6">
+                @csrf
+                @method('PUT')
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Nama Lengkap -->
+                    <div>
+                        <label for="nama_lengkap" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Nama Lengkap
+                        </label>
+                        <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap', $employee->nama_lengkap) }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('nama_lengkap')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Email
+                        </label>
+                        <input type="email" name="email" id="email" value="{{ old('email', $employee->email) }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('email')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Nomor Telepon -->
+                    <div>
+                        <label for="nomor_telepon" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Nomor Telepon
+                        </label>
+                        <input type="text" name="nomor_telepon" id="nomor_telepon" value="{{ old('nomor_telepon', $employee->nomor_telepon) }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('nomor_telepon')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Tanggal Lahir -->
+                    <div>
+                        <label for="tanggal_lahir" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Tanggal Lahir
+                        </label>
+                        <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir', $employee->tanggal_lahir) }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('tanggal_lahir')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Alamat -->
+                    <div>
+                        <label for="alamat" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Alamat
+                        </label>
+                        <input type="text" name="alamat" id="alamat" value="{{ old('alamat', $employee->alamat) }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('alamat')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Tanggal Masuk -->
+                    <div>
+                        <label for="tanggal_masuk" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Tanggal Masuk
+                        </label>
+                        <input type="date" name="tanggal_masuk" id="tanggal_masuk" value="{{ old('tanggal_masuk', $employee->tanggal_masuk) }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        @error('tanggal_masuk')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Status
+                        </label>
+                        <select name="status" id="status"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <option value="aktif" {{ old('status', $employee->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                            <option value="tidak aktif" {{ old('status', $employee->status) == 'tidak aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                        </select>
+                        @error('status')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Department -->
+                    <div>
+                        <label for="department_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Department
+                        </label>
+                        <select name="department_id" id="department_id"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <option value="">-- Pilih Department --</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->id }}" {{ old('department_id', $employee->departemen_id) == $department->id ? 'selected' : '' }}>
+                                    {{ $department->nama_departemen }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('department_id')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Position -->
+                    <div>
+                        <label for="jabatan_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Positions
+                        </label>
+                        <select name="jabatan_id" id="jabatan_id"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <option value="">-- Pilih Jabatan --</option>
+                            @foreach ($positions as $position)
+                                <option value="{{ $position->id }}" {{ old('jabatan_id', $employee->jabatan_id) == $position->id ? 'selected' : '' }}>
+                                    {{ $position->nama_jabatan }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('jabatan_id')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-end space-x-3 pt-4">
+                    <a href="{{ route('employees.index') }}"
+                       class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                        Batal
+                    </a>
+                    <button type="submit"
+                            class="px-5 py-2.5 text-sm font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endsection
+</body>
+</html>
+
+salary :
+controller :
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Salaries;
+use App\Models\Employee;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class SalariesController extends Controller
+{
+    public function index()
+    {
+        $salaries = Salaries::with('employee')->latest()->paginate(10);
+        return view('salaries.index', compact('salaries'));
+    }
+    public function create()
+    {
+        $employees = Employee::all();
+        return view('salaries.create', compact('employees'));
+    }
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'karyawan_id' => 'required|exists:employees,id',
+            'bulan' => 'required|string|max:10',
+            'gaji_pokok' => 'required|numeric|min:0',
+            'tunjangan' => 'nullable|numeric|min:0',
+            'potongan' => 'nullable|numeric|min:0',
+        ]);
+        $employee = Employee::with('position')->findOrFail($request->karyawan_id);
+        $gaji_pokok = $employee->position->gaji_pokok ?? 0;
+        $tunjangan = $request->tunjangan ?? 0;
+        $potongan = $request->potongan ?? 0;
+        $total_gaji = $gaji_pokok + $tunjangan - $potongan;
+
+        Salaries::create([
+            'karyawan_id' => $employee->id,
+            'bulan' => $request->bulan,
+            'gaji_pokok' => $gaji_pokok,
+            'tunjangan' => $tunjangan,
+            'potongan' => $potongan,
+            'total_gaji' => $total_gaji,
+        ]);
+        Salaries::create($validated);
+
+        return redirect()->route('salaries.index')->with('success', 'Gaji berhasil disimpan!');
+    }
+    public function edit(Salaries $salary)
+    {
+        $employees = Employee::all();
+        return view('salaries.edit', compact('salary', 'employees'));
+    }
+    public function update(Request $request, Salaries $salary)
+    {
+        $validated = $request->validate([
+            'karyawan_id' => 'required|exists:employees,id',
+            'bulan' => 'required|string|max:10',
+            'gaji_pokok' => 'required|numeric|min:0',
+            'tunjangan' => 'nullable|numeric|min:0',
+            'potongan' => 'nullable|numeric|min:0',
+        ]);
+
+        $salary->update($validated);
+
+        return redirect()->route('salaries.index')->with('success', 'Gaji berhasil diperbarui!');
+    }
+    public function getSalary($id)
+    {
+        // Find the employee by ID and load their position relationship
+        $employee = Employee::with('position')->find($id);
+
+        if ($employee && $employee->position) {
+            // Return the gaji_pokok from the associated position
+            return response()->json(['gaji_pokok' => $employee->position->gaji_pokok]);
+        } else {
+            // If employee or position is not found, return a default value or null/error
+            return response()->json(['gaji_pokok' => null], 404); // Or return 0 or a default message
+        }
+    }
+    public function destroy(Salaries $salary)
+    {
+        $salary->delete();
+        return redirect()->route('salaries.index')->with('success', 'Gaji berhasil dihapus!');
+    }
+}
+
+model :
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Salaries extends Model
+{
+    protected $table = 'salaries';
+    protected $fillable = [
+        'karyawan_id',
+        'bulan',
+        'gaji_pokok',
+        'tunjangan',
+        'potongan',
+        'total_gaji',
+    ];
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'karyawan_id', 'id');
+    }
+    protected static function booted()
+    {
+        static::saving(function ($salary) {
+            $salary->total_gaji = $salary->gaji_pokok + $salary->tunjangan - $salary->potongan;
+        });
+    }
+}
+
+index :
+@extends('master')
+
+@section('content')
+<div class="container">
+    <h1>Daftar Gaji Karyawan</h1>
+    <a href="{{ route('salaries.create') }}" class="btn btn-primary mb-3">Tambah Gaji</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Karyawan</th>
+                <th>Bulan</th>
+                <th>Gaji Pokok</th>
+                <th>Tunjangan</th>
+                <th>Potongan</th>
+                <th>Total Gaji</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($salaries as $salary)
+            <tr>
+                <td>{{ $salary->employee->nama ?? 'Tidak diketahui' }}</td>
+                <td>{{ $salary->bulan }}</td>
+                <td>Rp {{ number_format($salary->gaji_pokok, 2, ',', '.') }}</td>
+                <td>Rp {{ number_format($salary->tunjangan, 2, ',', '.') }}</td>
+                <td>Rp {{ number_format($salary->potongan, 2, ',', '.') }}</td>
+                <td><strong>Rp {{ number_format($salary->total_gaji, 2, ',', '.') }}</strong></td>
+                <td>
+                    <a href="{{ route('salaries.edit', $salary) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="{{ route('salaries.destroy', $salary) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="7" class="text-center">Tidak ada data gaji.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    {{ $salaries->links() }}
+</div>
+@endsection
+
+edit :
+@extends('master')
+
+@section('content')
+<div class="container">
+    <h1>Edit Gaji Karyawan</h1>
+
+    <form action="{{ route('salaries.update', $salary) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="mb-3">
+            <label for="karyawan_id" class="form-label">Karyawan</label>
+            <select name="karyawan_id" id="karyawan_id" class="form-control" required>
+                <option value="">-- Pilih Karyawan --</option>
+                @foreach($employees as $employee)
+                    <option value="{{ $employee->id }}" {{ $employee->id == $salary->karyawan_id ? 'selected' : '' }}>
+                        {{ $employee->nama }}
+                    </option>
+                @endforeach
+            </select>
+            @error('karyawan_id')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="bulan" class="form-label">Bulan</label>
+            <input type="text" name="bulan" id="bulan" class="form-control" placeholder="Contoh: Januari 2025" value="{{ old('bulan', $salary->bulan) }}" required>
+            @error('bulan')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="gaji_pokok" class="form-label">Gaji Pokok</label>
+            <input type="number" step="0.01" name="gaji_pokok" id="gaji_pokok" class="form-control" value="{{ old('gaji_pokok', $salary->gaji_pokok) }}" required>
+            @error('gaji_pokok')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="tunjangan" class="form-label">Tunjangan</label>
+            <input type="number" step="0.01" name="tunjangan" id="tunjangan" class="form-control" value="{{ old('tunjangan', $salary->tunjangan) }}">
+            @error('tunjangan')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="potongan" class="form-label">Potongan</label>
+            <input type="number" step="0.01" name="potongan" id="potongan" class="form-control" value="{{ old('potongan', $salary->potongan) }}">
+            @error('potongan')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary">Perbarui</button>
+        <a href="{{ route('salaries.index') }}" class="btn btn-secondary">Batal</a>
+    </form>
+</div>
+@endsection
+
+show :
+@extends('master')
+
+@section('content')
+<div class="container">
+    <h1>Detail Gaji Karyawan</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Karyawan:</strong> {{ $salary->employee->nama ?? 'Tidak diketahui' }}</p>
+            <p><strong>Bulan:</strong> {{ $salary->bulan }}</p>
+            <p><strong>Gaji Pokok:</strong> Rp {{ number_format($salary->gaji_pokok, 2, ',', '.') }}</p>
+            <p><strong>Tunjangan:</strong> Rp {{ number_format($salary->tunjangan, 2, ',', '.') }}</p>
+            <p><strong>Potongan:</strong> Rp {{ number_format($salary->potongan, 2, ',', '.') }}</p>
+            <p><strong>Total Gaji:</strong> <strong>Rp {{ number_format($salary->total_gaji, 2, ',', '.') }}</strong></p>
+        </div>
+    </div>
+
+    <a href="{{ route('salaries.index') }}" class="btn btn-secondary mt-3">Kembali ke Daftar</a>
+</div>
+@endsection
+
+create :
+{{-- resources/views/salaries/create.blade.php --}}
+@extends('master')
+
+@section('content')
+<div class="container">
+    <h1>Tambah Gaji Karyawan</h1>
+
+    <form action="{{ route('salaries.store') }}" method="POST">
+        @csrf
+
+        <div class="mb-3">
+            <label for="karyawan_id" class="form-label">Karyawan</label>
+            <select name="karyawan_id" id="karyawan_id" class="form-control" required>
+                <option value="">-- Pilih Karyawan --</option>
+                @foreach($employees as $employee)
+                    <option value="{{ $employee->id }}" data-position-gaji-pokok="{{ $employee->position->gaji_pokok ?? 0 }}">
+                        {{ $employee->nama_lengkap }}
+                    </option>
+                @endforeach
+            </select>
+            @error('karyawan_id')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="bulan" class="form-label">Bulan</label>
+            <input type="text" name="bulan" id="bulan" class="form-control" placeholder="Contoh: Januari 2025" value="{{ old('bulan') }}" required>
+            @error('bulan')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="gaji_pokok" class="form-label">Gaji Pokok</label>
+            <input type="number" step="0.01" name="gaji_pokok" id="gaji_pokok" class="form-control" value="{{ old('gaji_pokok') }}" required>
+            @error('gaji_pokok')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="tunjangan" class="form-label">Tunjangan</label>
+            <input type="number" step="0.01" name="tunjangan" id="tunjangan" class="form-control" value="{{ old('tunjangan', 0) }}">
+            @error('tunjangan')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="potongan" class="form-label">Potongan</label>
+            <input type="number" step="0.01" name="potongan" id="potongan" class="form-control" value="{{ old('potongan', 0) }}">
+            @error('potongan')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a href="{{ route('salaries.index') }}" class="btn btn-secondary">Batal</a>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const karyawanSelect = document.getElementById('karyawan_id');
+    const gajiPokokInput = document.getElementById('gaji_pokok');
+
+    karyawanSelect.addEventListener('change', function () {
+        const selectedKaryawanId = this.value;
+
+        if (selectedKaryawanId) {
+            // Get the salary value from the data attribute of the selected option
+            const selectedOption = this.options[this.selectedIndex];
+            const salaryValue = selectedOption.getAttribute('data-position-gaji-pokok');
+            gajiPokokInput.value = salaryValue;
+        } else {
+            // Clear the input if no employee is selected
+            gajiPokokInput.value = '';
+        }
+    });
+});
+</script>
+@endsection

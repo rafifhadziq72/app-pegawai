@@ -5,41 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Departemen</title>
     @vite(['resources/css/app.css'])
-    <!-- Jika kamu menggunakan FlowBite JS/CSS via NPM, uncomment baris di bawah -->
-    <!-- @vite(['resources/js/app.js']) -->
-    <!-- <link rel="stylesheet" href="path/to/flowbite.min.css" /> -->
 </head>
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="bg-gray-900 text-white">
     @extends('master')
     @section('content')
     <div class="container mx-auto px-4 py-8">
-        <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-            <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Edit Departemen</h1>
+        <div class="max-w-2xl mx-auto bg-gray-800 rounded-xl shadow-lg p-6">
+            <h1 class="text-xl font-bold mb-6">Edit Departemen</h1>
 
             <form action="{{ route('departments.update', $department->id) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
                 <!-- Nama Departemen Input -->
                 <div>
-                    <label for="nama_departemen" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    <label for="nama_departemen" class="block mb-2 text-sm font-medium">
                         Nama Departemen
                     </label>
                     <input type="text" name="nama_departemen" id="nama_departemen"
                            value="{{ old('nama_departemen', $department->nama_departemen) }}" required
-                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                           class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     @error('nama_departemen')
-                        <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Buttons -->
                 <div class="flex justify-end space-x-3 pt-4">
                     <a href="{{ route('departments.index') }}"
-                       class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                       class="px-5 py-2.5 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-500">
                         Batal
                     </a>
                     <button type="submit"
-                            class="px-5 py-2.5 text-sm font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                            class="px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300">
                         Update
                     </button>
                 </div>

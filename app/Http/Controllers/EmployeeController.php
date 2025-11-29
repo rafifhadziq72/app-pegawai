@@ -1,20 +1,45 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Employee;
 use Illuminate\Http\Request;
+
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::latest()->paginate(5);
+        $query = Employee::query();
+
+        // Handle search
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%")
+                  ->orWhere('nomor_telepon', 'LIKE', "%{$search}%")
+                  ->orWhere('alamat', 'LIKE', "%{$search}%")
+                  ->orWhereHas('department', function($deptQuery) use ($search) {
+                      $deptQuery->where('nama_departemen', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('position', function($posQuery) use ($search) {
+                      $posQuery->where('nama_jabatan', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        $employees = $query->latest()->paginate(5);
+
         return view('employees.index', compact('employees'));
     }
+
     public function create()
     {
         $departments = \App\Models\Department::all();
         $positions = \App\Models\Position::all();
         return view('employees.create', compact('departments', 'positions'));
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -31,17 +56,20 @@ class EmployeeController extends Controller
         Employee::create($request->all());
         return redirect()->route('employees.index');
     }
+
     public function show(string $id)
     {
         $employee = Employee::find($id);
         return view('employees.show', compact('employee'));
     }
+
     public function destroy(string $id)
     {
         $employee = Employee::find($id);
         $employee->delete();
         return redirect()->route('employees.index');
     }
+
     public function edit(string $id)
     {
         $employee = Employee::find($id);
@@ -49,9 +77,9 @@ class EmployeeController extends Controller
         $positions = \App\Models\Position::all();
         return view('employees.edit', compact('employee','departments','positions'));
     }
+
     public function update(Request $request, string $id)
     {
-
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -77,5 +105,4 @@ class EmployeeController extends Controller
         ]));
         return redirect()->route('employees.index');
     }
-
 }

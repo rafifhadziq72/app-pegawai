@@ -16,14 +16,13 @@ class Salaries extends Model
         'potongan',
         'total_gaji',
     ];
+
+
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'karyawan_id', 'id');
     }
-    protected static function booted()
-    {
-        static::saving(function ($salary) {
-            $salary->total_gaji = $salary->gaji_pokok + $salary->tunjangan - $salary->potongan;
-        });
-    }
+
+   
+   
 }
